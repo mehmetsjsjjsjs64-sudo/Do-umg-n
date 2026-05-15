@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doğum Günün Kutlu Olsun Aşkım</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(to bottom, #0f172a, #1e3a8a);
+            overflow-x: hidden;
+        }
+        .title-font {
+            font-family: 'Great Vibes', cursive;
+        }
+        .floating-heart {
+            position: absolute;
+            font-size: 2.4rem;
+            pointer-events: none;
+            animation: floatHeart linear forwards;
+            z-index: 10;
+        }
+        @keyframes floatHeart {
+            to { transform: translateY(-120vh) rotate(380deg); opacity: 0; }
+        }
+        .spin-slow {
+            animation: spin 3s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* SADE ŞİFRE EKRANI */
+        #login-overlay {
+            position: fixed;
+            inset: 0;
+            background: #0f172a;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .login-card {
+            text-align: center;
+            width: 85%;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white">
+
+    <div id="login-overlay">
+        <div class="login-card">
+            <h2 class="text-2xl mb-8 tracking-widest uppercase opacity-80">Şifre giriniz</h2>
+            <input type="text" id="passwordInput" placeholder="......" 
+                   class="w-full bg-transparent border-b-2 border-white/20 px-2 py-3 mb-8 text-center focus:outline-none focus:border-blue-400 transition-all text-xl">
+            <button onclick="checkPassword()" 
+                    class="w-full border border-white/30 py-3 rounded-full hover:bg-white/10 transition-all active:scale-95">
+                Giriş
+            </button>
+            <p id="errorMsg" class="mt-4 text-red-400 text-xs hidden">Hatalı şifre</p>
+        </div>
+    </div>
+
+    <div id="hearts" class="fixed inset-0 pointer-events-none z-50"></div>
+
+    <div class="fixed bottom-6 right-6 z-[100]">
+        <button onclick="toggleMusic()" id="musicBtn" class="w-16 h-16 bg-white/10 backdrop-blur-lg border border-white/30 rounded-full flex items-center justify-center shadow-2xl transition-all active:scale-90">
+            <i id="musicIcon" class="fas fa-music text-2xl text-blue-300"></i>
+        </button>
+        <audio id="bgMusic" loop>
+            <source src="müzik1.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <section class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
+        <div class="max-w-md mx-auto">
+            <h1 class="title-font text-6xl leading-none mb-4">Doğum Günün<br>Kutlu Olsun</h1>
+            <h2 class="title-font text-5xl text-blue-400 mb-10">Aşkım 🤍</h2>
+
+            <div class="mx-auto w-80 h-80 rounded-3xl overflow-hidden border-4 border-white/30 shadow-2xl mb-12">
+                <img src="ana.jpg" alt="Aşkım" class="w-full h-full object-cover">
+            </div>
+
+            <button onclick="document.getElementById('letter').scrollIntoView({behavior: 'smooth'})" 
+                    class="px-10 py-4 bg-white/10 hover:bg-white/20 border border-white/40 rounded-full text-lg transition-all">
+                Mektubunu Oku ↓
+            </button>
+        </div>
+    </section>
+
+    <section id="letter" class="py-20 px-6">
+        <div class="max-w-lg mx-auto bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-10">
+            <div class="text-center mb-10">
+                <h2 class="title-font text-5xl text-blue-300">Sana Özel Mektubum</h2>
+            </div>
+            <div class="text-xl leading-relaxed text-center space-y-6">
+                <p>Yavrum,</p>
+                <p><strong>Seni her zaman seviyorum. Seveceğim de.</strong></p>
+                <p><strong>Dünya güzeli Seni.</strong></p>
+                <p class="pt-8 italic">Ömür boyu seninle,<br>Sevgilin 🤍</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 px-6">
+        <h2 class="title-font text-5xl text-center mb-12 text-blue-300">Random Fotolar</h2>
+        <div class="max-w-2xl mx-auto space-y-8">
+            <div class="rounded-3xl overflow-hidden border border-white/30 shadow-2xl">
+                <img src="lan.jpg" class="w-full">
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-16 text-center text-3xl">
+        Sen benim her şeyimsin 🤍
+    </footer>
+
+    <script>
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const error = document.getElementById('errorMsg');
+            const overlay = document.getElementById('login-overlay');
+
+            if (input === '17 Mart' || input === '17 mart' || input === '17 MART') {
+                overlay.style.transform = 'translateY(-100%)';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 800);
+            } else {
+                error.classList.remove('hidden');
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        const music = document.getElementById('bgMusic');
+        const btn = document.getElementById('musicBtn');
+        const icon = document.getElementById('musicIcon');
+
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+                icon.className = 'fas fa-compact-disc text-2xl text-white spin-slow';
+                btn.classList.add('bg-blue-500/30');
+            } else {
+                music.pause();
+                icon.className = 'fas fa-music text-2xl text-blue-300';
+                btn.classList.remove('bg-blue-500/30');
+            }
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.textContent = Math.random() > 0.5 ? '🤍' : '💙';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.bottom = '-50px';
+            heart.style.animationDuration = (Math.random() * 8 + 9) + 's';
+            document.getElementById('hearts').appendChild(heart);
+            setTimeout(() => heart.remove(), 22000);
+        }
+
+        window.onload = () => {
+            setInterval(createHeart, 280);
+            for (let i = 0; i < 20; i++) setTimeout(createHeart, i * 180);
+        };
+    </script>
+</body>
+</html>
