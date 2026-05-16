@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -363,17 +363,21 @@
     </footer>
 
     <script>
-        // ŞİFRE KONTROLÜ
+        // ŞİFRE KONTROLÜ (Büyük/Küçük harf duyarlılığı tamamen giderildi)
         function checkPassword() {
             const input = document.getElementById('passwordInput').value.trim().toLowerCase();
             const overlay = document.getElementById('login-overlay');
 
-            if (input === '17 mart' || input === '1703' || input === '17.03') {
+            // Tüm olasılıkları Türkçe karakterlerle ve küçük harfle tam eşliyoruz
+            if (input === '17 mart' || input === '1703' || input === '17.03' || input === '17mart') {
+                // Konfeti fırlat
                 confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#f43f5e', '#a855f7', '#3b82f6', '#ffffff'] });
                 
+                // Şifre ekranını kaldır
                 overlay.style.transform = 'translateY(-100%)';
                 setTimeout(() => { overlay.style.display = 'none'; }, 800);
 
+                // Müziği otomatik yürütmeye çalış
                 try {
                     const music = document.getElementById('bgMusic');
                     const btn = document.getElementById('musicBtn');
@@ -383,16 +387,23 @@
                         icon.className = 'fas fa-compact-disc text-2xl text-white spin-slow';
                         btn.classList.add('bg-blue-500/30');
                     }).catch(err => {
-                        console.log("Müzik otomatik başlatılamadı.");
+                        console.log("Müzik etkileşim kısıtlamasına takıldı, manuel başlatılabilir.");
                     });
                 } catch(e) {
-                    console.log("Müzik yüklenemedi.");
+                    console.log("Müzik nesnesi yüklenemedi.");
                 }
             } else {
                 document.getElementById('errorMsg').classList.remove('hidden');
                 document.getElementById('passwordInput').value = '';
             }
         }
+
+        // Giriş alanında "Enter" tuşuna basılırsa da kontrol etsin
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
 
         const letterLines = ["<p class='text-xl text-pink-300 font-bold'>Yavrum,</p>", "<p class='text-lg md:text-xl font-semibold text-white'>Seni her zaman seviyorum. Seveceğim de.</p>", "<p class='text-lg md:text-xl font-semibold text-white'>Dünya güzeli Seni.</p>", "<p class='pt-4 italic text-sm opacity-70 text-pink-200'>Ömür boyu seninle,<br>Sevgilin 🤍</p>"];
         let isTypingStarted = false;
@@ -444,15 +455,5 @@
         const btn = document.getElementById('musicBtn');
         const icon = document.getElementById('musicIcon');
         function toggleMusic() {
-            if (music.paused) { music.play(); icon.className = 'fas fa-compact-disc text-2xl text-white spin-slow'; btn.classList.add('bg-blue-500/30'); }
-            else { music.pause(); icon.className = 'fas fa-music text-2xl text-blue-300'; btn.classList.remove('bg-blue-500/30'); }
-        }
-
-        function createHeart() {
-            const heartWrapper = document.createElement('div');
-            heartWrapper.className = 'floating-heart';
-            const size = Math.random() * 20 + 15; 
-            const colors = ['#f43f5e', '#3b82f6', '#a855f7', '#ec4899', '#10b981', '#f59e0b'];
-            heartWrapper.style.left = Math.random() * 100 + 'vw';
-            heartWrapper.style.top = Math.random() *
+            if (music.paused) { music.play(); icon.className = 'fas fa-compact-disc text-2xl text-white spin-slow'; btn.classList.add('bg
 
