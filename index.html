@@ -146,6 +146,7 @@
             100% { opacity: 0; transform: scale(0) translateY(-40px) translateX(var(--x-random)) rotate(180deg); }
         }
 
+        /* SABİTLENEN ŞİFRE EKRANI STİLİ */
         #login-overlay {
             position: fixed;
             inset: 0;
@@ -154,6 +155,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transform: translateY(0); /* Animasyon başlangıcı için bu şarttı */
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .login-card {
@@ -259,7 +261,6 @@
 
     <div class="stars"></div>
 
-    <!-- ŞİFRE EKRANI -->
     <div id="login-overlay">
         <div class="login-card">
             <h2 class="text-2xl mb-8 tracking-widest uppercase opacity-80 neon-glow">Şifre giriniz Biliyorsan</h2>
@@ -273,7 +274,6 @@
         </div>
     </div>
 
-    <!-- SAĞ ÜSTTEKİ AYARLAR MENU BUTONU -->
     <div class="fixed top-6 right-6 z-[110]">
         <button onclick="toggleSettings()" class="w-12 h-12 bg-white/5 backdrop-blur-lg border border-white/10 rounded-full flex items-center justify-center shadow-lg hover:bg-white/10 transition-all">
             <i class="fas fa-sliders text-xl text-white"></i>
@@ -315,7 +315,6 @@
         </div>
     </section>
 
-    <!-- MEKTUP BÖLÜMÜ -->
     <section id="letter-section" class="py-32 px-6 flex flex-col items-center justify-center min-h-screen">
         <h2 class="title-font text-5xl text-center mb-16 text-pink-300">Sana Özel Mektubum</h2>
         
@@ -363,21 +362,25 @@
     </footer>
 
     <script>
-        // ŞİFRE KONTROLÜ (Büyük/Küçük harf duyarlılığı tamamen giderildi)
+        // ŞİFRE KONTROLÜ
         function checkPassword() {
             const input = document.getElementById('passwordInput').value.trim().toLowerCase();
             const overlay = document.getElementById('login-overlay');
 
-            // Tüm olasılıkları Türkçe karakterlerle ve küçük harfle tam eşliyoruz
             if (input === '17 mart' || input === '1703' || input === '17.03' || input === '17mart') {
                 // Konfeti fırlat
                 confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#f43f5e', '#a855f7', '#3b82f6', '#ffffff'] });
                 
-                // Şifre ekranını kaldır
-                overlay.style.transform = 'translateY(-100%)';
-                setTimeout(() => { overlay.style.display = 'none'; }, 800);
+                // Mobil tarayıcılar için garantili yukarı kaydırma tetikleyicisi
+                requestAnimationFrame(() => {
+                    overlay.style.transform = 'translateY(-100%)';
+                });
+                
+                setTimeout(() => { 
+                    overlay.style.display = 'none'; 
+                }, 800);
 
-                // Müziği otomatik yürütmeye çalış
+                // Müziği oynatmayı dene
                 try {
                     const music = document.getElementById('bgMusic');
                     const btn = document.getElementById('musicBtn');
@@ -387,10 +390,10 @@
                         icon.className = 'fas fa-compact-disc text-2xl text-white spin-slow';
                         btn.classList.add('bg-blue-500/30');
                     }).catch(err => {
-                        console.log("Müzik etkileşim kısıtlamasına takıldı, manuel başlatılabilir.");
+                        console.log("Müzik için kullanıcı etkileşimi bekleniyor.");
                     });
                 } catch(e) {
-                    console.log("Müzik nesnesi yüklenemedi.");
+                    console.log("Müzik bileşeni hatası.");
                 }
             } else {
                 document.getElementById('errorMsg').classList.remove('hidden');
@@ -398,7 +401,7 @@
             }
         }
 
-        // Giriş alanında "Enter" tuşuna basılırsa da kontrol etsin
+        // Enter tuşu desteği
         document.getElementById('passwordInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 checkPassword();
@@ -408,7 +411,6 @@
         const letterLines = ["<p class='text-xl text-pink-300 font-bold'>Yavrum,</p>", "<p class='text-lg md:text-xl font-semibold text-white'>Seni her zaman seviyorum. Seveceğim de.</p>", "<p class='text-lg md:text-xl font-semibold text-white'>Dünya güzeli Seni.</p>", "<p class='pt-4 italic text-sm opacity-70 text-pink-200'>Ömür boyu seninle,<br>Sevgilin 🤍</p>"];
         let isTypingStarted = false;
 
-        // MEKTUP AÇILDIĞINDA ÖZEL KALPLİ KONFETİ PATLAMASI
         function openEnvelope(e) {
             const env = document.getElementById('envelope');
             env.classList.toggle('open');
@@ -416,7 +418,6 @@
             if(env.classList.contains('open')) {
                 document.getElementById('envelope-hint').style.opacity = '0';
                 
-                // Kalp Konfetisi Tetikleyici
                 const rect = env.getBoundingClientRect();
                 const centerX = (rect.left + rect.width / 2) / window.innerWidth;
                 const centerY = (rect.top + rect.height / 2) / window.innerHeight;
@@ -455,5 +456,5 @@
         const btn = document.getElementById('musicBtn');
         const icon = document.getElementById('musicIcon');
         function toggleMusic() {
-            if (music.paused) { music.play(); icon.className = 'fas fa-compact-disc text-2xl text-white spin-slow'; btn.classList.add('bg
-
+            if (music.paused) { music.play(); icon.className = 'fas fa-compact-disc text-2xl text-white spin-slow'; btn.classList.add('bg-blue-500/30'); }
+            else { music.pause(); icon.className = 'fas fa-music text-2xl text-blue-300'; btn.clas
