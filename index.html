@@ -12,20 +12,37 @@
         
         body {
             font-family: 'Playfair Display', serif;
+            background: #060913;
             overflow-x: hidden;
             position: relative;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-color: #05070f;
         }
 
-        /* DİNAMİK ARKA PLANLAR */
-        .theme-landscape-moon {
-            background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.85)), url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?q=80&w=1200&auto=format&fit=crop');
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            filter: blur(130px);
+            opacity: 0.5;
+            z-index: -1;
+            animation: floatGlow 10s infinite alternate ease-in-out;
         }
-        .theme-blue-bordeaux {
-            background: linear-gradient(135deg, #060913, #1e3a8a, #4c0519);
+        body::before {
+            background: radial-gradient(circle, #f43f5e, #a855f7);
+            top: 15%;
+            left: -5%;
+        }
+        body::after {
+            background: radial-gradient(circle, #3b82f6, #6366f1);
+            bottom: 20%;
+            right: -5%;
+            animation-delay: -5s;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 50px) scale(1.25); }
         }
 
         .stars {
@@ -93,17 +110,34 @@
 
         .touch-trail {
             position: fixed;
-            width: 8px; height: 8px;
+            width: 6px; height: 6px;
             border-radius: 50%;
+            background: white;
             pointer-events: none;
             z-index: 1000;
             opacity: 0;
-            filter: blur(0.5px) drop-shadow(0 0 8px currentColor);
-            animation: trailFadeOut 1s forwards cubic-bezier(0.1, 0.8, 0.2, 1);
+            filter: blur(1px) drop-shadow(0 0 5px currentColor);
+            animation: trailFadeOut 1.2s forwards ease-out;
         }
         @keyframes trailFadeOut {
-            0% { opacity: 1; transform: scale(1) rotate(0deg); }
-            100% { opacity: 0; transform: scale(0) translateY(-40px) translateX(var(--x-random)) rotate(180deg); }
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0) translateY(-20px) translateX(var(--x-random)); }
+        }
+
+        #login-overlay {
+            position: fixed;
+            inset: 0;
+            background: #05070f;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .login-card {
+            text-align: center;
+            width: 85%;
+            max-width: 300px;
         }
 
         .envelope-wrapper {
@@ -193,150 +227,113 @@
         .lightbox.open img {
             transform: scale(1);
         }
-
-        #settings-panel {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
-        }
     </style>
 </head>
 <body class="min-h-screen text-white">
 
     <div class="stars"></div>
 
-    <div id="password-screen" class="fixed inset-0 bg-[#060913] z-[99999] flex flex-col items-center justify-center p-6">
-        <div class="w-full max-w-sm card-blur rounded-3xl p-8 text-center border border-white/10 shadow-2xl">
-            <div class="w-16 h-16 mx-auto mb-6 bg-pink-500/10 rounded-full flex items-center justify-center text-pink-500">
-                <i class="fas fa-lock text-2xl"></i>
-            </div>
-            
-            <h2 class="text-xl font-bold mb-6 tracking-wide text-white/90">
-                Şifre Giriniz Biliyorsan
-            </h2>
-            
-            <input type="text" id="passwordInput" placeholder="••••••" 
-                   class="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3.5 mb-5 text-center focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all text-xl text-white tracking-widest font-mono">
-            
+    <div id="login-overlay">
+        <div class="login-card">
+            <h2 class="text-2xl mb-8 tracking-widest uppercase opacity-80 neon-glow">Şifre giriniz Biliyorsan</h2>
+            <input type="text" id="passwordInput" placeholder="......" 
+                   class="w-full bg-transparent border-b-2 border-white/20 px-2 py-3 mb-8 text-center focus:outline-none focus:border-blue-400 transition-all text-xl">
             <button onclick="checkPassword()" 
-                    class="w-full bg-pink-600 hover:bg-pink-700 text-white py-3.5 rounded-xl font-semibold tracking-wide shadow-lg shadow-pink-600/20 active:scale-[0.98] transition-all text-base">
+                    class="w-full border border-white/30 py-3 rounded-full hover:bg-white/10 transition-all active:scale-95">
                 Giriş
             </button>
-            
-            <p id="errorMsg" class="mt-5 text-red-400 text-xs font-medium bg-red-500/10 py-2.5 px-4 rounded-lg border border-red-500/20 hidden">
-                Hata:Bilmiyorsan denemesene Awk
-            </p>
+            <p id="errorMsg" class="mt-4 text-red-400 text-xs hidden">Şifreyi Bilmiyorsan Ne Deniyorsun Aq 3 Yanliştan Sonda Bloke Oluo haberin Olsun</p>
         </div>
     </div>
 
+    <div id="hearts" class="fixed inset-0 pointer-events-none z-50"></div>
 
-    <div id="main-content" class="hidden min-h-screen theme-landscape-moon">
-
-        <div class="fixed top-6 right-6 z-[110]">
-            <button onclick="toggleSettings()" class="w-12 h-12 bg-white/5 backdrop-blur-lg border border-white/10 rounded-full flex items-center justify-center shadow-lg hover:bg-white/10 transition-all">
-                <i class="fas fa-sliders text-xl text-white"></i>
-            </button>
-
-            <div id="settings-panel" class="absolute right-0 mt-3 w-56 bg-slate-950/90 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl opacity-0 pointer-events-none scale-95 origin-top-right">
-                <h3 class="text-xs font-semibold tracking-wider uppercase opacity-60 mb-3 text-center">Tema Seçenekleri</h3>
-                <div class="grid grid-cols-1 gap-2">
-                    <button onclick="changeTheme('theme-landscape-moon')" class="py-2.5 rounded-xl border border-white/10 text-xs bg-white/5 hover:bg-pink-500/20 transition-all">🌙 Ay Işığı</button>
-                    <button onclick="changeTheme('theme-blue-bordeaux')" class="py-2.5 rounded-xl border border-white/10 text-xs bg-white/5 hover:bg-blue-500/20 transition-all">🍇 Mavi & Bordo</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="hearts" class="fixed inset-0 pointer-events-none z-50"></div>
-
-        <div class="fixed bottom-6 right-6 z-[100]">
-            <button onclick="toggleMusic()" id="musicBtn" class="w-16 h-16 card-blur rounded-full flex items-center justify-center transition-all active:scale-90">
-                <i id="musicIcon" class="fas fa-music text-2xl text-blue-300"></i>
-            </button>
-            <audio id="bgMusic" loop>
-                <source src="müzik1.mp3" type="audio/mpeg">
-            </audio>
-        </div>
-
-        <section class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
-            <div class="max-w-md mx-auto">
-                <h1 class="title-font text-6xl leading-none mb-4 neon-glow">Doğum Günün<br>Kutlu Olsun</h1>
-                <h2 class="title-font text-5xl text-pink-400 mb-8">Aşkım 🤍</h2>
-
-                <div class="mx-auto w-72 h-72 rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl mb-8 pulse-heart">
-                    <img src="ana.jpg" alt="Aşkım" class="w-full h-full object-cover">
-                </div>
-
-                <button onclick="document.getElementById('letter-section').scrollIntoView({behavior: 'smooth'})" 
-                        class="px-10 py-4 card-blur hover:bg-white/10 rounded-full text-lg transition-all relative z-10">
-                    Mektubunu Oku ↓
-                </button>
-            </div>
-        </section>
-
-        <section id="letter-section" class="py-32 px-6 flex flex-col items-center justify-center min-h-screen">
-            <h2 class="title-font text-5xl text-center mb-16 text-pink-300">Sana Özel Mektubum</h2>
-            
-            <div class="envelope-wrapper" id="envelope" onclick="openEnvelope(event)">
-                <div class="envelope-flap"></div>
-                
-                <div class="letter-content text-center flex flex-col justify-center items-center space-y-4">
-                    <div id="typed-text" class="text-lg md:text-xl leading-relaxed font-semibold min-h-[150px] flex flex-col justify-center items-center space-y-3">
-                    </div>
-                </div>
-                
-                <div id="envelope-hint" class="absolute inset-0 flex items-center justify-center text-white/40 text-sm tracking-wider uppercase pointer-events-none z-10 transition-opacity duration-300">
-                    Açmak için dokun Yavrum🤍
-                </div>
-            </div>
-        </section>
-
-        <section class="py-16 px-6 relative z-10">
-            <h2 class="title-font text-5xl text-center mb-12 text-blue-300">Random Fotolar</h2>
-            <div class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 gallery">
-                <div class="rounded-3xl overflow-hidden border border-white/20 shadow-2xl cursor-pointer" onclick="openLightbox('Lamm.jpg')">
-                    <img src="Lamm.jpg" class="w-full h-full object-cover">
-                </div>
-                <div class="rounded-3xl overflow-hidden border border-white/20 shadow-2xl cursor-pointer" onclick="openLightbox('Nnn.jpg')">
-                    <img src="Nnn.jpg" class="w-full h-full object-cover">
-                </div>
-                <div class="rounded-3xl overflow-hidden border border-white/20 shadow-2xl cursor-pointer" onclick="openLightbox('Lan.jpg')">
-                    <img src="Lan.jpg" class="w-full h-full object-cover">
-                </div>
-                <div class="rounded-3xl overflow-hidden border border-white/20 shadow-2xl cursor-pointer" onclick="openLightbox('Lam.jpg')">
-                    <img src="Lam.jpg" class="w-full h-full object-cover">
-                </div>
-            </div>
-        </section>
-
-        <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-            <img id="lightbox-img" src="" alt="Büyük Görünüm">
-        </div>
-
-        <footer class="py-16 text-center text-3xl neon-glow relative z-10">
-            Sen benim her şeyimsin 🤍<br>
-            Doğum günün Kutlu Olsun Güzelim <br>
-            👅👅👅👅👅👅👅👅👅👅👅👅👅👅👅<br>
-                         22 Ekim 
-        </footer>
+    <div class="fixed bottom-6 right-6 z-[100]">
+        <button onclick="toggleMusic()" id="musicBtn" class="w-16 h-16 card-blur rounded-full flex items-center justify-center transition-all active:scale-90">
+            <i id="musicIcon" class="fas fa-music text-2xl text-blue-300"></i>
+        </button>
+        <audio id="bgMusic" loop>
+            <source src="müzik1.mp3" type="audio/mpeg">
+        </audio>
     </div>
+
+    <section class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
+        <div class="max-w-md mx-auto">
+            <h1 class="title-font text-6xl leading-none mb-4 neon-glow">Doğum Günün<br>Kutlu Olsun</h1>
+            <h2 class="title-font text-5xl text-pink-400 mb-8">Aşkım 🤍</h2>
+
+            <div class="mx-auto w-72 h-72 rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl mb-8 pulse-heart">
+                <img src="ana.jpg" alt="Aşkım" class="w-full h-full object-cover">
+            </div>
+
+            <button onclick="document.getElementById('letter-section').scrollIntoView({behavior: 'smooth'})" 
+                    class="px-10 py-4 card-blur hover:bg-white/10 rounded-full text-lg transition-all relative z-10">
+                Mektubunu Oku ↓
+            </button>
+        </div>
+    </section>
+
+    <section id="letter-section" class="py-32 px-6 flex flex-col items-center justify-center min-h-screen">
+        <h2 class="title-font text-5xl text-center mb-16 text-pink-300">Sana Özel Mektubum</h2>
+        
+        <div class="envelope-wrapper" id="envelope" onclick="openEnvelope()">
+            <div class="envelope-flap"></div>
+            
+            <div class="letter-content text-center flex flex-col justify-center items-center space-y-4">
+                <div id="typed-text" class="text-lg md:text-xl leading-relaxed font-semibold min-h-[150px] flex flex-col justify-center items-center space-y-3">
+                </div>
+            </div>
+            
+            <div id="envelope-hint" class="absolute inset-0 flex items-center justify-center text-white/40 text-sm tracking-wider uppercase pointer-events-none z-10 transition-opacity duration-300">
+                Açmak için dokun Yavrum🤍
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 px-6 relative z-10">
+        <h2 class="title-font text-5xl text-center mb-12 text-blue-300">Random Fotolar</h2>
+        <div class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 gallery">
+            <div class="rounded-3xl overflow-hidden border border-white/20 shadow-2xl cursor-pointer" onclick="openLightbox('Lamm.jpg')">
+                <img src="Lamm.jpg" class="w-full h-full object-cover">
+            </div>
+            <div class="rounded-3xl overflow-hidden border border-white/20 shadow-2xl cursor-pointer" onclick="openLightbox('Nnn.jpg')">
+                <img src="Nnn.jpg" class="w-full h-full object-cover">
+            </div>
+            <div class="rounded-3xl overflow-hidden border border-white/20 shadow-2xl cursor-pointer" onclick="openLightbox('Lan.jpg')">
+                <img src="Lan.jpg" class="w-full h-full object-cover">
+            </div>
+            <div class="rounded-3xl overflow-hidden border border-white/20 shadow-2xl cursor-pointer" onclick="openLightbox('Lam.jpg')">
+                <img src="Lam.jpg" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </section>
+
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="Büyük Görünüm">
+    </div>
+
+    <footer class="py-16 text-center text-3xl neon-glow relative z-10">
+        Sen benim her şeyimsin 🤍
+        Doğum günün Kutlu Olsun Güzelim 
+        👅👅👅👅👅👅👅👅👅👅👅👅👅👅👅
+                     22 Ekim 
+    </footer>
 
     <script>
-        let appReady = false;
-
-        // ŞİFRE KONTROLÜ
+        // ŞİFRE KONTROLÜ (Garantili Versiyon)
         function checkPassword() {
             const input = document.getElementById('passwordInput').value.trim().toLowerCase();
-            const passwordScreen = document.getElementById('password-screen');
-            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('login-overlay');
 
-            if (input === '17 mart' || input === '1703' || input === '17.03' || input === '17mart') {
-                // Şifre panelini gizle, sayfayı göster
-                passwordScreen.style.display = 'none';
-                mainContent.classList.remove('hidden');
-                appReady = true;
-
-                // Konfeti patlat
+            // Hem '17 mart' hem de rakamsal olarak '1703' veya '17.03' girişini kabul eder
+            if (input === '17 mart' || input === '1703' || input === '17.03') {
                 confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#f43f5e', '#a855f7', '#3b82f6', '#ffffff'] });
+                
+                // Ekranı hemen yukarı kaydır
+                overlay.style.transform = 'translateY(-100%)';
+                setTimeout(() => { overlay.style.display = 'none'; }, 800);
 
-                // Müziği arka planda çalmayı dene
+                // Müziği tarayıcı engeline takılmadan çalmayı dene
                 try {
                     const music = document.getElementById('bgMusic');
                     const btn = document.getElementById('musicBtn');
@@ -346,10 +343,10 @@
                         icon.className = 'fas fa-compact-disc text-2xl text-white spin-slow';
                         btn.classList.add('bg-blue-500/30');
                     }).catch(err => {
-                        console.log("Müzik etkileşim bekliyor.");
+                        console.log("Tarayıcı otomatik müziği engelledi, kullanıcı sağ alttaki butondan açabilir.");
                     });
                 } catch(e) {
-                    console.log("Müzik yükleme hatası.");
+                    console.log("Müzik yüklenemedi.");
                 }
             } else {
                 document.getElementById('errorMsg').classList.remove('hidden');
@@ -357,35 +354,16 @@
             }
         }
 
-        // Enter tuşu ile giriş yapabilme
-        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
-        });
-
         const letterLines = ["<p class='text-xl text-pink-300 font-bold'>Yavrum,</p>", "<p class='text-lg md:text-xl font-semibold text-white'>Seni her zaman seviyorum. Seveceğim de.</p>", "<p class='text-lg md:text-xl font-semibold text-white'>Dünya güzeli Seni.</p>", "<p class='pt-4 italic text-sm opacity-70 text-pink-200'>Ömür boyu seninle,<br>Sevgilin 🤍</p>"];
         let isTypingStarted = false;
 
-        function openEnvelope(e) {
+        function openEnvelope() {
             const env = document.getElementById('envelope');
             env.classList.toggle('open');
-            
             if(env.classList.contains('open')) {
                 document.getElementById('envelope-hint').style.opacity = '0';
-                
-                const rect = env.getBoundingClientRect();
-                const centerX = (rect.left + rect.width / 2) / window.innerWidth;
-                const centerY = (rect.top + rect.height / 2) / window.innerHeight;
-
-                const defaults = { spread: 360, ticks: 100, gravity: 0.6, decay: 0.94, startVelocity: 20, colors: ['#f43f5e', '#ec4899', '#fffff0', '#fda4af'] };
-                confetti({ ...defaults, particleCount: 50, scalar: 1.5, shapes: ['heart'], origin: { x: centerX, y: centerY } });
-                confetti({ ...defaults, particleCount: 30, scalar: 1, origin: { x: centerX, y: centerY } });
-
                 if (!isTypingStarted) { isTypingStarted = true; setTimeout(startTypewriter, 600); }
-            } else { 
-                setTimeout(() => { document.getElementById('envelope-hint').style.opacity = '1'; }, 400); 
-            }
+            } else { setTimeout(() => { document.getElementById('envelope-hint').style.opacity = '1'; }, 400); }
         }
 
         function startTypewriter() {
@@ -417,7 +395,6 @@
         }
 
         function createHeart() {
-            if (!appReady) return;
             const heartWrapper = document.createElement('div');
             heartWrapper.className = 'floating-heart';
             const size = Math.random() * 20 + 15; 
@@ -426,4 +403,31 @@
             heartWrapper.style.top = Math.random() * 100 + 'vh';
             heartWrapper.style.setProperty('--x-move', (Math.random() * 200 - 100) + 'px');
             heartWrapper.style.setProperty('--y-move', (Math.random() * -200 - 50) + 'px');
-            heartWrapper.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" class="heart-svg" style="color: ${colors[Math.floor(Math.random() * colors.length)]}; stroke: ${colors[Math.floor(Math.random() * colors.length)]};"><path d="M12 21.
+            heartWrapper.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" class="heart-svg" style="color: ${colors[Math.floor(Math.random() * colors.length)]}; stroke: ${colors[Math.floor(Math.random() * colors.length)]};"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+            heartWrapper.style.animationDuration = (Math.random() * 4 + 4) + 's';
+            document.getElementById('hearts').appendChild(heartWrapper);
+            setTimeout(() => heartWrapper.remove(), 8000);
+        }
+        
+        function openLightbox(imgSrc) { const lightbox = document.getElementById('lightbox'); const lightboxImg = document.getElementById('lightbox-img'); lightboxImg.src = imgSrc; lightbox.classList.add('open'); }
+        function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+        function createTrailParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'touch-trail';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.setProperty('--x-random', (Math.random() * 40 - 20) + 'px');
+            particle.style.color = ['#f43f5e', '#3b82f6', '#a855f7', '#ffffff'][Math.floor(Math.random() * 4)];
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 1200);
+        }
+        document.addEventListener('mousemove', (e) => createTrailParticle(e.clientX, e.clientY));
+        document.addEventListener('touchstart', (e) => createTrailParticle(e.touches[0].clientX, e.touches[0].clientY));
+        document.addEventListener('touchmove', (e) => createTrailParticle(e.touches[0].clientX, e.touches[0].clientY));
+
+        window.onload = () => { setInterval(createHeart, 250); for (let i = 0; i < 25; i++) setTimeout(createHeart, i * 100); };
+    </script>
+</body>
+</html>
+Bu kodun arka planını değiştirmeden o arka plan seçeneklerini ekle
