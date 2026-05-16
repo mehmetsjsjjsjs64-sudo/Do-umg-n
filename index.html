@@ -203,20 +203,25 @@
 
     <div class="stars"></div>
 
-    <div id="password-screen" class="fixed inset-0 bg-[#05070f] z-[99999] flex flex-col items-center justify-center p-6">
-        <div class="w-full max-w-sm text-center">
-            <h2 class="text-2xl font-bold mb-8 tracking-wide uppercase neon-glow text-white/90">
+    <div id="password-screen" class="fixed inset-0 bg-[#060913] z-[99999] flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-sm card-blur rounded-3xl p-8 text-center border border-white/10 shadow-2xl">
+            <div class="w-16 h-16 mx-auto mb-6 bg-pink-500/10 rounded-full flex items-center justify-center text-pink-500">
+                <i class="fas fa-lock text-2xl"></i>
+            </div>
+            
+            <h2 class="text-xl font-bold mb-6 tracking-wide text-white/90">
                 Şifre Giriniz Biliyorsan
             </h2>
-            <input type="text" id="passwordInput" placeholder="......" 
-                   class="w-full bg-transparent border-b-2 border-white/20 px-2 py-3 mb-6 text-center focus:outline-none focus:border-pink-500 transition-all text-2xl text-white">
+            
+            <input type="text" id="passwordInput" placeholder="••••••" 
+                   class="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3.5 mb-5 text-center focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all text-xl text-white tracking-widest font-mono">
             
             <button onclick="checkPassword()" 
-                    class="w-full bg-white/5 border border-white/20 py-3.5 rounded-xl font-medium tracking-wide hover:bg-white/10 active:scale-95 transition-all text-lg">
+                    class="w-full bg-pink-600 hover:bg-pink-700 text-white py-3.5 rounded-xl font-semibold tracking-wide shadow-lg shadow-pink-600/20 active:scale-[0.98] transition-all text-base">
                 Giriş
             </button>
             
-            <p id="errorMsg" class="mt-5 text-red-500 text-sm font-semibold tracking-wide hidden">
+            <p id="errorMsg" class="mt-5 text-red-400 text-xs font-medium bg-red-500/10 py-2.5 px-4 rounded-lg border border-red-500/20 hidden">
                 Hata:Bilmiyorsan denemesene Awk
             </p>
         </div>
@@ -316,22 +321,22 @@
     <script>
         let appReady = false;
 
-        // KESİN ÇÖZÜMLÜ ŞİFRE SİSTEMİ
+        // ŞİFRE KONTROLÜ
         function checkPassword() {
             const input = document.getElementById('passwordInput').value.trim().toLowerCase();
             const passwordScreen = document.getElementById('password-screen');
             const mainContent = document.getElementById('main-content');
 
             if (input === '17 mart' || input === '1703' || input === '17.03' || input === '17mart') {
-                // Şifre ekranını tamamen yok et, sayfayı aç
+                // Şifre panelini gizle, sayfayı göster
                 passwordScreen.style.display = 'none';
                 mainContent.classList.remove('hidden');
                 appReady = true;
 
-                // Konfeti fırlat
+                // Konfeti patlat
                 confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#f43f5e', '#a855f7', '#3b82f6', '#ffffff'] });
 
-                // Müziği yürütmeyi dene
+                // Müziği arka planda çalmayı dene
                 try {
                     const music = document.getElementById('bgMusic');
                     const btn = document.getElementById('musicBtn');
@@ -341,10 +346,10 @@
                         icon.className = 'fas fa-compact-disc text-2xl text-white spin-slow';
                         btn.classList.add('bg-blue-500/30');
                     }).catch(err => {
-                        console.log("Müzik etkileşim kısıtlamasında.");
+                        console.log("Müzik etkileşim bekliyor.");
                     });
                 } catch(e) {
-                    console.log("Müzik hatası.");
+                    console.log("Müzik yükleme hatası.");
                 }
             } else {
                 document.getElementById('errorMsg').classList.remove('hidden');
@@ -352,7 +357,7 @@
             }
         }
 
-        // Enter tuşu desteği
+        // Enter tuşu ile giriş yapabilme
         document.getElementById('passwordInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 checkPassword();
@@ -412,7 +417,7 @@
         }
 
         function createHeart() {
-            if (!appReady) return; // Giriş yapılmadan kalp üretme
+            if (!appReady) return;
             const heartWrapper = document.createElement('div');
             heartWrapper.className = 'floating-heart';
             const size = Math.random() * 20 + 15; 
@@ -421,7 +426,4 @@
             heartWrapper.style.top = Math.random() * 100 + 'vh';
             heartWrapper.style.setProperty('--x-move', (Math.random() * 200 - 100) + 'px');
             heartWrapper.style.setProperty('--y-move', (Math.random() * -200 - 50) + 'px');
-            heartWrapper.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" class="heart-svg" style="color: ${colors[Math.floor(Math.random() * colors.length)]}; stroke: ${colors[Math.floor(Math.random() * colors.length)]};"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
-            heartWrapper.style.animationDuration = (Math.random() * 4 + 4) + 's';
-            document.getElementById('hearts').appendChild(heartWrapper);
-            setTimeout(() => heartWrapper
+            heartWrapper.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" class="heart-svg" style="color: ${colors[Math.floor(Math.random() * colors.length)]}; stroke: ${colors[Math.floor(Math.random() * colors.length)]};"><path d="M12 21.
